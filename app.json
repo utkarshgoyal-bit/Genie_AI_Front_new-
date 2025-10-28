@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "Genie_AI",
+    "slug": "Genie_AI",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/GardenGenieIcon.png",
+    "scheme": "genieai",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hydrofarmtech.GenieAI",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/GardenGenieIcon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.hydrofarmtech.Genie_AI"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/GardenGenieIcon.png"
+    },
+    "expo": {
+      "jsEngine": "hermes"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 34,
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 35,
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "BASE_URL": "http://13.233.21.86",
+      "router": {},
+      "eas": {
+        "projectId": "e319c1aa-f321-47af-a9ab-4e3342075351"
+      }
+    },
+    "owner": "maitrii-infotech"
+  }
+}

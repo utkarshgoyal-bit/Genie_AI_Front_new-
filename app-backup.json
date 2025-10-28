@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Genie_AI",
+    "slug": "Genie_AI",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/robot.png",
+    "scheme": "genieai",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/robot.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.ankit_010.Genie_AI"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/robot.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/videos/robot1.mp4",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-video"
+    ],
+    "experiments": {
+      "router": true,
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "01ea7375-cb6f-49d3-9032-3e50a7fb0b5a"
+      }
+    },
+    "owner": "ankit_010"
+  }
+}
