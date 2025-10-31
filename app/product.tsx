@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
@@ -40,10 +42,18 @@ const ProductList: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/products/`);
-      if (!response.ok) throw new Error("Failed to fetch products");
+      const token = await AsyncStorage.getItem("access_token");
+        if (!token) {
+          Alert.alert("Error", "You are not logged in.");
+          setLoading(false);
+          return;
+        }
+      const response = await axios.get(`${BASE_URL}/products/`,{
+          params: { token },
+        });
+      if (response.status !== 200) throw new Error("Failed to fetch products");
 
-      const data: Product[] = await response.json();
+      const data: Product[] = await response.data;
     
 
        const normalized = data.map((d: any) => ({
