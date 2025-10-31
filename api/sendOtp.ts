@@ -12,7 +12,7 @@ const handleResendCode = async ({ phoneNumber }: { phoneNumber: number }) => {
     const data = response.json();
     return data;
   } catch (error) {
-    console.error(error);
+    return null;
   }
 };
 const handleVerifyOtp = async ({
@@ -23,11 +23,6 @@ const handleVerifyOtp = async ({
   verificationCode: string;
 }) => {
   try {
-    console.log("Sending verify request:", {
-      mobile: String(cleanPhone),
-      otp: String(verificationCode),
-    });
-
     const response = await fetch(`${BASE_URL}/auth/verify_otp`, {
       method: "POST",
       headers: {
@@ -39,10 +34,8 @@ const handleVerifyOtp = async ({
         otp: String(verificationCode),
       }),
     });
-    console.log("Verify OTP response:", response);
     return response;
   } catch (error: any) {
-    console.error(error?.message);
     return error;
   }
 };

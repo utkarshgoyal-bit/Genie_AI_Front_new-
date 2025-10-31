@@ -11,16 +11,16 @@ export const NoPlantFound = ({
   setAlertVisible: (value: boolean) => void;
 }) => {
   const plantImageMapping: Record<string, any> = {
-    Rose: "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/rose.png",
-    Hibiscus: "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/hibiscus.png",
-    "Money Plant": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/moneyplant.png",
-    "Areca Palm": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/arecapalm.png",
-    Tomato: "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/tomato.png",
-    "Peace Lily": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/peacelily.png",
-    "Curry Leaf": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/curry.png",
-    Croton: "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/croton.png",
-    "Fiddle Leaf Fig": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/fiddle.png",
-    "Snake Plant": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/snakeplant.png",
+    Rose: require("../assets/images/rose.png"),
+    Hibiscus: require("../assets/images/hibiscus.png"),
+    "Money Plant": require("../assets/images/moneyplant.png"),
+    "Areca Palm": require("../assets/images/arecapalm.png"),
+    Tomato: require("../assets/images/tomato.png"),
+    "Peace Lily": require("../assets/images/peacelily.png"),
+    "Curry Leaf": require("../assets/images/curry.png"),
+    Croton: require("../assets/images/croton.png"),
+    "Fiddle Leaf Fig": require("../assets/images/fiddle.png"),
+    "Snake Plant": require("../assets/images/snakeplant.png"),
   };
 
   return (
@@ -48,7 +48,7 @@ export const NoPlantFound = ({
             elevation: 5,
           }}>
           <Image
-            source={"https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/robot.png"}
+            source={"../assets/images/robot.png"}
             style={{ width: 50, height: 50, marginBottom: 10 }}
             contentFit="contain"
             cachePolicy={"memory-disk"}

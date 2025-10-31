@@ -36,9 +36,9 @@ export default function SplashScreen() {
       if (isDev) {
         try {
           await AsyncStorage.clear();
-          console.log("AsyncStorage cleared on app reload (DEV only)");
+          // AsyncStorage cleared for development
         } catch (e) {
-          console.error("Failed to clear storage:", e);
+          // Failed to clear storage
         }
       }
     };

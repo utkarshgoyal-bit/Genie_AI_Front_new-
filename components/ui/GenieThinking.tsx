@@ -33,7 +33,7 @@ const GenieThinking: React.FC = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={"https://gardengeniepublic.s3.ap-south-1.amazonaws.com/gif/second-gif.gif"}
+        source={require("../../assets/gif/second-gif.gif")}
         style={styles.robotImage}
         contentFit="contain"
         cachePolicy={"memory-disk"}

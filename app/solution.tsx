@@ -47,7 +47,7 @@ const RecommendedSolutionScreen = () => {
   try {
     data = result ? JSON.parse(result as string) : null;
   } catch (e) {
-    console.error("Invalid JSON:", result, e);
+    // Failed to parse result JSON
   }
 
   interface Product {
@@ -71,9 +71,9 @@ const RecommendedSolutionScreen = () => {
 
     const fetchProducts = async () => {
       try {
-        const url = `${BASE_URL}/products/by-scientific-name/${encodeURIComponent(
-          sciName
-        )}?plant_name=${encodeURIComponent(plantSciName)}`;
+       const url = `${BASE_URL}/products/search?disease_scientific_name=${encodeURIComponent(
+      sciName
+    )}&plant_scientific_name=${encodeURIComponent(plantSciName)}`;
 
         const productRes = await fetch(url);
         const productData = await productRes.json();
@@ -82,12 +82,21 @@ const RecommendedSolutionScreen = () => {
           setShowProducts(true);
           return;
         }
-
-        const uniqueProducts = Array.isArray(productData) ? productData.filter((p, i, arr) => arr.findIndex(pp => pp.product_name === p.product_name) === i) : [];
-        setProducts(uniqueProducts);
+        const items = Array.isArray(productData) ? productData : [];
+        const normalized: Product[] = items.map((p: any) => ({
+          disease: p.disease ?? p.disease_common_name ?? "",
+          product_name: p.product_name ?? p.name ?? "Product",
+          how_to_use: p.how_to_use ?? "",
+          product_image:
+            p.product_image && typeof p.product_image === "string" && p.product_image.trim().length > 0
+              ? p.product_image
+              : "https://via.placeholder.com/160x160.png?text=Product",
+          product_link: p.product_link ?? "",
+        }));
+        setProducts(normalized);
         setShowProducts(true);
       } catch (err) {
-        console.error("Product fetch error:", err);
+        // Failed to fetch products
         setProducts([]);
         setShowProducts(true);
       }

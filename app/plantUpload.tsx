@@ -22,23 +22,22 @@ const PlantUpload = () => {
   const cameraRef = useRef<CameraView | null>(null);
 
   useEffect(() => {
-  const getMobileNumber = async () => {
-    try {
-      const number = await AsyncStorage.getItem("mobile_number");
-      setMobileNumber(number);
-    } catch (error) {
-      console.log("Error fetching mobile number:", error);
-    }
-  };
-  getMobileNumber();
-}, []);
+    const getMobileNumber = async () => {
+      try {
+        const number = await AsyncStorage.getItem("mobile_number");
+        setMobileNumber(number);
+      } catch (error) {
+        // Failed to fetch mobile number from storage
+      }
+    };
+    getMobileNumber();
+  }, []);
 
   const image = useMemo(() => {
     if (mobileNumber === "9999999999") {
-      return "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/roseDisease.png";
+      return "../assets/images/roseDisease.png";
     }
   }, [mobileNumber]);
-
 
   useEffect(() => {
     if (!permission) requestPermission();
@@ -61,7 +60,6 @@ const PlantUpload = () => {
         });
         setIsCameraOpen(false);
       } catch (error) {
-        console.log("Error taking picture:", error);
         Alert.alert("Camera Error", "Failed to take picture. Please try again.");
       }
     }
@@ -85,6 +83,7 @@ const PlantUpload = () => {
         status: "loading",
       },
     });
+    setCapturedImages([]);
   }, [validImageCount, capturedImages]);
 
   const handleCameraPress = useCallback((stepIndex: number) => {
@@ -129,7 +128,7 @@ const PlantUpload = () => {
         <View style={styles.imageWrapper}>
           {capturedImages[step - 1] ? (
             <Image
-              source={{ uri: capturedImages[step - 1]}}
+              source={{ uri: capturedImages[step - 1] }}
               style={styles.image}
               contentFit="cover"
               cachePolicy={"memory-disk"}
@@ -139,9 +138,7 @@ const PlantUpload = () => {
           ) : (
             <Image
               source={
-                step === 1
-                  ? "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/arecapalm.png"
-                  : "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/plant-analysis.png"
+                step === 1 ? require("../assets/images/arecapalm.png") : require("../assets/images/plant-analysis.png")
               }
               style={styles.image}
               contentFit="cover"
@@ -318,7 +315,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   headerTitle: { fontSize: 18, fontFamily: Fonts.Poppins.bold, fontWeight: "bold", color: "#1F2937" },
-  headerDescription: { color: "#6B7280",fontFamily: Fonts.Poppins.regular, fontSize: 13, textAlign: "center" },
+  headerDescription: { color: "#6B7280", fontFamily: Fonts.Poppins.regular, fontSize: 13, textAlign: "center" },
   stepCard: {
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -361,9 +358,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stepNumberText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
-  stepText: { flex: 1, fontFamily: Fonts.Poppins.bold, },
+  stepText: { flex: 1, fontFamily: Fonts.Poppins.bold },
   stepTitle: { fontWeight: "600", fontFamily: Fonts.Poppins.bold, fontSize: 14, color: "#111827" },
-  stepDesc: { color: "#6B7280",fontFamily: Fonts.Poppins.regular, fontSize: 12 },
+  stepDesc: { color: "#6B7280", fontFamily: Fonts.Poppins.regular, fontSize: 12 },
   imageWrapper: { position: "relative", marginBottom: 10 },
   image: { width: "100%", height: 160, borderRadius: 16 },
   cameraIconWrapper: {
@@ -390,9 +387,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
     elevation: 4,
-    
   },
-  uploadText: { color: "#fff",fontFamily: Fonts.Poppins.bold, fontWeight: "600", fontSize: 12 },
+  uploadText: { color: "#fff", fontFamily: Fonts.Poppins.bold, fontWeight: "600", fontSize: 12 },
   tipsBox: {
     marginTop: 8,
     backgroundColor: "#EFF6FF",
@@ -415,7 +411,7 @@ const styles = StyleSheet.create({
     color: "#1F2937",
     fontSize: 13,
     marginBottom: 4,
-    fontFamily: Fonts.Poppins.bold
+    fontFamily: Fonts.Poppins.bold,
   },
   tipLine: { fontSize: 12, color: "#4B5563", fontFamily: Fonts.Poppins.regular },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },

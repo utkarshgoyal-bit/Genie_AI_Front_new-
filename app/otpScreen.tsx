@@ -66,18 +66,18 @@ const OtpScreen = () => {
       const cleanPhone = Array.isArray(mobile) ? mobile[0] : mobile;
       try {
         const response = await handleVerifyOtp({
-          cleanPhone: cleanPhone,
+          cleanPhone: `+91${cleanPhone}`,
           verificationCode: verificationCode,
         });
         const data = await response.json();
         if (response.ok) {
           setLoading(false);
           if (data.token) {
-          await AsyncStorage.setItem("access_token", data.token);
-        } else {
-          Alert.alert("Error", "Token not received from server");
-          return;
-        }
+            await AsyncStorage.setItem("access_token", data.token);
+          } else {
+            Alert.alert("Error", "Token not received from server");
+            return;
+          }
           await AsyncStorage.setItem("isverified", "true");
           await AsyncStorage.setItem("mobile", String(cleanPhone));
           Alert.alert("Success", String(data.message || "Phone verified!"));
@@ -115,29 +115,28 @@ const OtpScreen = () => {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardView}
-      >
+        style={styles.keyboardView}>
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Verify Your Number</Text>
-            <Text style={styles.subtitle}>
-              We&apos;ve sent a 4-digit verification code to your mobile number
-            </Text>
+            <Text style={styles.subtitle}>We&apos;ve sent a 4-digit verification code to your mobile number</Text>
           </View>
 
           {/* SMS Success Indicator */}
           <View style={styles.smsIndicator}>
-            <Ionicons name="checkmark-circle" size={16} color="#00b894" />
+            <Ionicons
+              name="checkmark-circle"
+              size={16}
+              color="#00b894"
+            />
             <Text style={styles.smsText}>SMS sent successfully</Text>
           </View>
 
           {/* Verification Code Input */}
           <View style={styles.codeContainer}>
             <Text style={styles.codeTitle}>Enter Verification Code</Text>
-            <Text style={styles.codeSubtitle}>
-              Please enter the 4-digit code below
-            </Text>
+            <Text style={styles.codeSubtitle}>Please enter the 4-digit code below</Text>
 
             <View style={styles.codeInputContainer}>
               {code.map((digit, index) => {
@@ -149,14 +148,9 @@ const OtpScreen = () => {
                   <TextInput
                     key={index}
                     ref={inputRefs.current[index]}
-                    style={[
-                      styles.codeInput,
-                      digit ? styles.codeInputFilled : null,
-                    ]}
+                    style={[styles.codeInput, digit ? styles.codeInputFilled : null]}
                     value={digit}
-                    onChangeText={(text: string) =>
-                      handleCodeChange(text.slice(-1), index)
-                    }
+                    onChangeText={(text: string) => handleCodeChange(text.slice(-1), index)}
                     onKeyPress={(e: any) => handleKeyPress(e, index)}
                     keyboardType="numeric"
                     maxLength={1}
@@ -169,25 +163,17 @@ const OtpScreen = () => {
 
             {/* Resend Code */}
             <View style={styles.resendContainer}>
-              <Text style={styles.resendText}>
-                Don&apos;t receive the code?
-              </Text>
+              <Text style={styles.resendText}>Don&apos;t receive the code?</Text>
               <TouchableOpacity
                 onPress={onHandleResendCodeHandler}
                 disabled={!canResend}
-                style={styles.resendButton}
-              >
+                style={styles.resendButton}>
                 <Ionicons
                   name="refresh"
                   size={16}
                   color={canResend ? "#16a34a" : "#b2bec3"}
                 />
-                <Text
-                  style={[
-                    styles.resendButtonText,
-                    { color: canResend ? "#16a34a" : "#b2bec3" },
-                  ]}
-                >
+                <Text style={[styles.resendButtonText, { color: canResend ? "#16a34a" : "#b2bec3" }]}>
                   Resend Code {!canResend && `(${resendTimer}s)`}
                 </Text>
               </TouchableOpacity>
@@ -196,22 +182,16 @@ const OtpScreen = () => {
 
           {/* Verify Button */}
           <TouchableOpacity
-            style={[
-              styles.verifyButton,
-              isCodeComplete && styles.verifyButtonActive,
-            ]}
+            style={[styles.verifyButton, isCodeComplete && styles.verifyButtonActive]}
             onPress={onHandleVerifyHandler}
-            disabled={!isCodeComplete || loading}
-          >
+            disabled={!isCodeComplete || loading}>
             <Ionicons
               name="checkmark-circle-outline"
               size={20}
               color="white"
               style={styles.verifyIcon}
             />
-            <Text style={styles.verifyButtonText}>
-              {loading ? "Verifying..." : "Verify & Continue"}
-            </Text>
+            <Text style={styles.verifyButtonText}>{loading ? "Verifying..." : "Verify & Continue"}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

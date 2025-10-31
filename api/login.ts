@@ -7,10 +7,8 @@ const loginApi = async ({ phoneNumber }: { phoneNumber: string }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mobile: phoneNumber }),
     });
-    console.log("Response status:", response.status);
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || "Failed to send OTP");
-    console.log("Response data:", data);
 
     return data;
   } catch (error) {

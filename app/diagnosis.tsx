@@ -46,16 +46,16 @@ const Typewriter: React.FC<TypewriterProps> = ({ text, delay = 0, speed = 50 }) 
 };
 
 const plantImages: Record<string, any> = {
-  Rosa: "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/rose.png",
-  "Hibiscus rosa-sinensis": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/hibiscus.png",
-  "Epipremnum aureum": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/moneyplant.png",
-  "Sansevieria trifasciata": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/snakeplant.png",
-  "Dypsis lutescens": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/arecapalm.png",
-  "Murraya koenigii": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/curry.png",
-  "Codiaeum variegatum": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/croton.png",
-  "Solanum lycopersicum": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/tomato.png",
-  "Spathiphyllum spp": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/peacelily.png",
-  "Ficus lyrata": "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/fiddle.png",
+  Rosa: require("../assets/images/rose.png"),
+  "Hibiscus rosa-sinensis": require("../assets/images/hibiscus.png"),
+  "Epipremnum aureum": require("../assets/images/moneyplant.png"),
+  "Sansevieria trifasciata": require("../assets/images/snakeplant.png"),
+  "Dypsis lutescens": require("../assets/images/arecapalm.png"),
+  "Murraya koenigii": require("../assets/images/curry.png"),
+  "Codiaeum variegatum": require("../assets/images/croton.png"),
+  "Solanum lycopersicum": require("../assets/images/tomato.png"),
+  "Spathiphyllum spp": require("../assets/images/peacelily.png"),
+  "Ficus lyrata": require("../assets/images/fiddle.png"),
 };
 
 const DetailedDiagnosisScreen = () => {
@@ -72,7 +72,7 @@ const DetailedDiagnosisScreen = () => {
     data = result ? JSON.parse(result as string) : null;
     uploadedImages = images ? JSON.parse(images as string) : [];
   } catch (e) {
-    console.error("Invalid result JSON:", result, e);
+    // Failed to parse diagnosis result
     uploadedImages = [];
   }
 
@@ -105,10 +105,7 @@ const DetailedDiagnosisScreen = () => {
 
         <View style={styles.imageCard}>
           <Image
-            source={
-              plantImages[data?.scientific_name] ||
-              "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/disease.png"
-            }
+            source={plantImages[data?.scientific_name] || "../assets/images/disease.png"}
             style={styles.plantImage}
             contentFit="cover"
             cachePolicy={"memory-disk"}
@@ -192,31 +189,27 @@ const DetailedDiagnosisScreen = () => {
             </View>
 
             <Image
-              source={
-                uploadedImages?.[1] ||
-                "https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/yellowing-leaves.png"
-              }
+              source={uploadedImages?.[1] || "../assets/images/yellowing-leaves.png"}
               style={styles.issueImage}
             />
           </View>
         )}
-
-
       </ScrollView>
 
       {animationStage >= 2 && (
-        <View style={{
-          position: 'absolute',
-          bottom: 120,
-          left: 0,
-          right: 0,
-          zIndex: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 4,
-          paddingHorizontal: 20,
-        }}>
+        <View
+          style={{
+            position: "absolute",
+            bottom: 120,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 4,
+            paddingHorizontal: 20,
+          }}>
           <Button
             onPress={() =>
               router.push({
@@ -378,7 +371,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "600",
     fontSize: 12,
-    fontFamily: Fonts.Poppins.bold
+    fontFamily: Fonts.Poppins.bold,
   },
   button: {
     flexDirection: "row",

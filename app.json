@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Genie_AI",
+    "name": "Garden Genie AI",
     "slug": "Genie_AI",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,6 +8,13 @@
     "scheme": "genieai",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "description": "AI-powered plant disease diagnosis and gardening assistant. Upload photos of your plants to identify diseases and get expert care recommendations.",
+    "privacy": "public",
+    "splash": {
+      "image": "./assets/images/GardenGenieIcon.png",
+      "backgroundColor": "#00000000",
+      "resizeMode": "contain"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hydrofarmtech.GenieAI",
@@ -21,16 +28,26 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.hydrofarmtech.Genie_AI"
+      "package": "com.hydrofarmtech.genie_ai",
+      "versionCode": 1,
+      "hermesEnabled": true,
+      "permissions": [
+        "CAMERA",
+        "INTERNET",
+        "RECORD_AUDIO",
+        "VIBRATE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ],
+      "blockedPermissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "privacyPolicy": "https://gardengenie.in/privacy-policy/"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/GardenGenieIcon.png"
     },
-    "expo": {
-      "jsEngine": "hermes"
-    },
+    "jsEngine": "hermes",
     "plugins": [
       "expo-router",
       "expo-video",
@@ -38,16 +55,17 @@
         "expo-build-properties",
         {
           "android": {
-            "minSdkVersion": 34,
+            "minSdkVersion": 24,
             "targetSdkVersion": 35,
             "compileSdkVersion": 35,
-            "usesCleartextTraffic": true
+            "usesCleartextTraffic": false,
+            "networkSecurityConfig": "network_security_config"
           }
         }
       ]
     ],
     "extra": {
-      "BASE_URL": "http://13.233.21.86",
+      "BASE_URL": "https://api.gardengenie.in",
       "router": {},
       "eas": {
         "projectId": "e319c1aa-f321-47af-a9ab-4e3342075351"

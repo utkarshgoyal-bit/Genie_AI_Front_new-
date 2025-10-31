@@ -15,7 +15,6 @@ const plantAnalysisApi = async ({
 }) => {
   try {
     const token = await AsyncStorage.getItem("access_token");
-    console.log("DEBUG: fetched token ->", token);
 
     if (!token) {
       router.navigate("/phoneVerification");
@@ -31,10 +30,8 @@ const plantAnalysisApi = async ({
       },
       onUploadProgress,
     });
-    console.log("Backend response:", response?.data);
     return response?.data?.data;
   } catch (err: any) {
-    console.error(err);
     throw err;
   }
 };

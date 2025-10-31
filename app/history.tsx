@@ -1,19 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Fonts } from "../constants/Fonts";
 
 interface HistoryItem {
@@ -61,12 +52,10 @@ const HistoryScreen = () => {
           };
         });
 
-
         setHistory(mappedHistory);
       } catch (error: any) {
-        console.error("History fetch error:", error);
         Alert.alert("Error", "Failed to fetch history.");
-      } finally {
+      } finally{
         setLoading(false);
       }
     };
@@ -84,24 +73,27 @@ const HistoryScreen = () => {
     });
   };
 
-  const renderItem = ({ item }: { item: HistoryItem }) => (
-    <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
-      <Image
-        source={{
-          uri: item.plantImage || "https://via.placeholder.com/80"
-        }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <View style={styles.textWrapper}>
-        <Text style={styles.plantName}>{item.plantName}</Text>
-        <Text style={styles.diseaseName}>
-          Disease:{" "}
-          <Text style={styles.diseaseNameHighlight}>{item.diseaseName}</Text>
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }: { item: HistoryItem }) => {
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => handleCardPress(item)}>
+        <Image
+          source={{
+            uri: item.plantImage || "https://via.placeholder.com/80",
+          }}
+          style={styles.image}
+          contentFit="cover"
+        />
+        <View style={styles.textWrapper}>
+          <Text style={styles.plantName}>{item.plantName}</Text>
+          <Text style={styles.diseaseName}>
+            Disease: <Text style={styles.diseaseNameHighlight}>{item.diseaseName}</Text>
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -118,9 +110,7 @@ const HistoryScreen = () => {
           data={history}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No history records found 🌱</Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>No history records found 🌱</Text>}
         />
       )}
     </View>
@@ -137,7 +127,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontFamily: Fonts.Poppins.bold,
-    marginBottom: 16
+    marginBottom: 16,
   },
   backBtn: {
     padding: 8,
@@ -145,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 50,
   },
-  
+
   card: {
     flexDirection: "row",
     backgroundColor: "#fff",

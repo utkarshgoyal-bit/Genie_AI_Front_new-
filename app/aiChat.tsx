@@ -36,7 +36,7 @@ const AIChatScreen = () => {
     try {
       return images ? JSON.parse(images as string) : [];
     } catch (e) {
-      console.log("Image parse error:", e, images);
+      // Failed to parse images
       return [];
     }
   }, [images]);
@@ -71,30 +71,34 @@ const AIChatScreen = () => {
           setDisplayProgress((prev) => {
             if (prev >= 100) {
               clearInterval(waitInterval);
-              const detectedPlant = plantData?.scientific_name?.toLowerCase().trim();
+              
+              // Use setTimeout to defer state updates to next tick
+              setTimeout(() => {
+                const detectedPlant = plantData?.scientific_name?.toLowerCase().trim();
 
-              if (!Object.keys(allowedPlants).includes(detectedPlant)) {
-                setAlertVisible(true);
-                return prev;
-              }
+                if (!Object.keys(allowedPlants).includes(detectedPlant)) {
+                  setAlertVisible(true);
+                  return;
+                }
 
-              plantData.common_name = allowedPlants[detectedPlant];
+                plantData.common_name = allowedPlants[detectedPlant];
 
-              router.replace({
-                pathname: "/diagnosis",
-                params: {
-                  images: JSON.stringify(uploadedImages),
-                  result: JSON.stringify(plantData),
-                },
-              });
+                router.replace({
+                  pathname: "/diagnosis",
+                  params: {
+                    images: JSON.stringify(uploadedImages),
+                    result: JSON.stringify(plantData),
+                  },
+                });
+              }, 0);
+              
+              return prev;
             } else {
               return prev + 1; // Smoothly fill remaining progress
             }
-            return prev;
           });
         }, 20);
       } else {
-        console.error("Upload error:", plantData?.response?.data.detail);
         Alert.alert(
           `Upload Error ${plantData.code} ${plantData.status}`,
           plantData?.response?.data.detail || "There was an error uploading the images.",
@@ -102,7 +106,6 @@ const AIChatScreen = () => {
         );
       }
     } catch (error: any) {
-      console.error("Upload error:", error);
       Alert.alert(
         `Upload Error ${error.code}: ${error.status}`,
         error?.response?.data.detail || "There was an error uploading the images.",

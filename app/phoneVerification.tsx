@@ -6,7 +6,15 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { ArrowRight, Smartphone } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Linking,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const PhoneLoginScreen = () => {
@@ -23,7 +31,10 @@ const PhoneLoginScreen = () => {
     };
     checkverified();
 
-    const timers = [setTimeout(() => setShowContent(true), 200), setTimeout(() => setShowForm(true), 600)];
+    const timers = [
+      setTimeout(() => setShowContent(true), 200),
+      setTimeout(() => setShowForm(true), 600),
+    ];
     return () => timers.forEach(clearTimeout);
   }, []);
 
@@ -40,7 +51,7 @@ const PhoneLoginScreen = () => {
   const onSendOtpHandler = async () => {
     if (!isValidPhoneNumber) return;
     const cleanNumber = phoneNumber.replace(/\D/g, "");
-    const otpSent: any = await loginApi({ phoneNumber: cleanNumber });
+    const otpSent: any = await loginApi({ phoneNumber: `+91${cleanNumber}` });
     if (!!otpSent.otp) {
       Alert.alert(otpSent?.message || "Success", "OTP sent successfully");
       router.push(`/otpScreen?mobile=${cleanNumber}`);
@@ -54,13 +65,14 @@ const PhoneLoginScreen = () => {
       contentContainerStyle={styles.scroll}
       enableOnAndroid
       extraScrollHeight={120}
-      keyboardShouldPersistTaps="handled">
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.innerContainer}>
         {/* Header */}
         {showContent && (
           <View style={styles.header}>
             <Image
-              source={"https://gardengeniepublic.s3.ap-south-1.amazonaws.com/images/robot.png"}
+              source={require("../assets/images/robot.png")}
               style={styles.robotImage}
               contentFit="contain"
               cachePolicy={"memory-disk"}
@@ -68,7 +80,9 @@ const PhoneLoginScreen = () => {
               responsivePolicy={"static"}
             />
             <Text style={styles.title}>Welcome to Genie AI</Text>
-            <Text style={styles.subtitle}>Enter your phone number to get started with AI-powered plant care</Text>
+            <Text style={styles.subtitle}>
+              Enter your phone number to get started with AI-powered plant care
+            </Text>
           </View>
         )}
 
@@ -78,14 +92,13 @@ const PhoneLoginScreen = () => {
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <View style={styles.iconCircle}>
-                  <Smartphone
-                    size={20}
-                    color="#16a34a"
-                  />
+                  <Smartphone size={20} color="#16a34a" />
                 </View>
                 <View>
                   <Text style={styles.cardTitle}>Phone Number</Text>
-                  <Text style={styles.cardDesc}>We&apos;ll send you a verification code</Text>
+                  <Text style={styles.cardDesc}>
+                    We&apos;ll send you a verification code
+                  </Text>
                 </View>
               </View>
 
@@ -96,7 +109,9 @@ const PhoneLoginScreen = () => {
                 <TextInput
                   keyboardType="number-pad"
                   value={phoneNumber}
-                  onChangeText={(text) => setPhoneNumber(formatPhoneNumber(text))}
+                  onChangeText={(text) =>
+                    setPhoneNumber(formatPhoneNumber(text))
+                  }
                   placeholder="Enter 10-digit number"
                   style={styles.input}
                   maxLength={11}
@@ -106,14 +121,14 @@ const PhoneLoginScreen = () => {
                     style={[
                       styles.indicator,
                       {
-                        backgroundColor: isValidPhoneNumber ? "#16a34a" : "#d1d5db",
+                        backgroundColor: isValidPhoneNumber
+                          ? "#16a34a"
+                          : "#d1d5db",
                       },
-                    ]}>
+                    ]}
+                  >
                     {isValidPhoneNumber && (
-                      <ArrowRight
-                        size={14}
-                        color="#fff"
-                      />
+                      <ArrowRight size={14} color="#fff" />
                     )}
                   </View>
                 )}
@@ -123,23 +138,53 @@ const PhoneLoginScreen = () => {
             <TouchableOpacity
               onPress={onSendOtpHandler}
               disabled={!isValidPhoneNumber}
-              style={[styles.otpButton, !isValidPhoneNumber && styles.disabledButton]}>
+              style={[
+                styles.otpButton,
+                !isValidPhoneNumber && styles.disabledButton,
+              ]}
+            >
               <Smartphone
                 size={18}
                 color={isValidPhoneNumber ? "#fff" : "#9ca3af"}
               />
-              <Text style={[styles.otpText, !isValidPhoneNumber && styles.disabledText]}>Get Verification Code</Text>
-              {isValidPhoneNumber && (
-                <ArrowRight
-                  size={18}
-                  color="#fff"
-                />
-              )}
+              <Text
+                style={[
+                  styles.otpText,
+                  !isValidPhoneNumber && styles.disabledText,
+                ]}
+              >
+                Get Verification Code
+              </Text>
+              {isValidPhoneNumber && <ArrowRight size={18} color="#fff" />}
             </TouchableOpacity>
 
             <Text style={styles.termsText}>
-              By continue, you agree to our <Text style={styles.linkText}>Terms of Service</Text> and{" "}
-              <Text style={styles.linkText}>Privacy Policy</Text>
+              By continue, you agree to our{" "}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  Linking.openURL(
+                    "https://gardengenie.in/terms-conditions/"
+                  ).catch(() =>
+                    Alert.alert("Error", "Unable to open Terms of Service")
+                  )
+                }
+              >
+                Terms of Service
+              </Text>{" "}
+              and{" "}
+              <Text
+                style={styles.linkText}
+                onPress={() =>
+                  Linking.openURL(
+                    "https://gardengenie.in/privacy-policy/"
+                  ).catch(() =>
+                    Alert.alert("Error", "Unable to open Privacy Policy")
+                  )
+                }
+              >
+                Privacy Policy
+              </Text>
             </Text>
           </View>
         )}

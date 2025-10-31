@@ -25,6 +25,7 @@ interface Product {
   disease_scientific_name?: string;
   product_link?: string;
   product_name?: string;
+  name?: string;
   how_to_use?: string;
   product_image?: string;
 }
@@ -41,16 +42,26 @@ const ProductList: React.FC = () => {
       setLoading(true);
       const response = await fetch(`${BASE_URL}/products/`);
       if (!response.ok) throw new Error("Failed to fetch products");
+
       const data: Product[] = await response.json();
+    
 
-      const uniqueProducts = data.filter(
-        (prod, index, self) =>
-          index === self.findIndex((p) => p.product_name === prod.product_name)
-      );
+       const normalized = data.map((d: any) => ({
+      ...d,
+      product_name: d.product_name ?? d.name,
+    }));
+      const uniqueProducts = normalized.filter(
+      (item, index, self) =>
+        index ===
+        self.findIndex(
+          (p) =>
+            p.product_name?.toLowerCase().trim() ===
+            item.product_name?.toLowerCase().trim()
+        )
+    );
 
-      setProducts(uniqueProducts);
+    setProducts(uniqueProducts);
     } catch (error: any) {
-      console.log("Error fetching products:", error);
       Alert.alert("Error", error.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -83,11 +94,7 @@ const ProductList: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: Product }) => (
-    <TouchableOpacity
-      style={styles.productCard}
-      activeOpacity={0.8}
-      onPress={() => openProductLink(item.product_link)}
-    >
+    <View style={styles.productCard}>
       <Image
         source={{
           uri: item.product_image
@@ -103,18 +110,27 @@ const ProductList: React.FC = () => {
       />
 
       <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.product_name}</Text>
-        <Text style={styles.productPrice}>
-          {item.disease ? `For: ${item.disease}` : ""}
-        </Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => openModal(item)}
-        >
-          <Text style={styles.addButtonText}>How to use</Text>
-        </TouchableOpacity>
+        {/*  Product name only once */}
+        <Text style={styles.productName}>{item.product_name || item.name}</Text>
+
+        {/* ✅ How to use + Buy Now buttons side by side */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => openModal(item)}
+          >
+            <Text style={styles.addButtonText}>How to use</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.addButton,  {backgroundColor: "#16a34a"}]}
+            onPress={() => openProductLink(item.product_link)}
+          >
+            <Text style={styles.addButtonText}>Buy Now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   if (loading) {
@@ -128,6 +144,7 @@ const ProductList: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Products</Text>
+
       <FlatList
         data={products}
         keyExtractor={(item, index) =>
@@ -150,7 +167,7 @@ const ProductList: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              {selectedProduct?.product_name}
+              {selectedProduct?.product_name || selectedProduct?.name}
             </Text>
             <ScrollView style={{ marginTop: 10 }}>
               <Text style={styles.modalContent}>
@@ -193,16 +210,19 @@ const styles = StyleSheet.create({
   productImage: { width: 80, height: 80, borderRadius: 8 },
   productInfo: { flex: 1, marginLeft: 12, justifyContent: "space-between" },
   productName: { fontSize: 16, fontFamily: Fonts.Poppins.bold },
-  productPrice: { fontSize: 14, fontFamily: Fonts.Poppins.regular, color: "#888" },
   addButton: {
     backgroundColor: "#16a34a",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
     alignSelf: "flex-start",
-    marginTop: 6,
   },
   addButtonText: { color: "#fff", fontFamily: Fonts.Poppins.bold },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 6,
+  },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   modalOverlay: {
     flex: 1,
