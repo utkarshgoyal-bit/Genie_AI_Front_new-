@@ -2,15 +2,15 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { History } from "lucide-react-native";
+import { usePathname, useRouter } from "expo-router";
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Fonts } from "../constants/Fonts";
 
 const { width } = Dimensions.get("window");
 
-export default function MiniTabBar() {
+export default function MiniTabBar({ visible = true }: { visible?: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <View style={styles.footerContainer}>
@@ -24,9 +24,9 @@ export default function MiniTabBar() {
           <MaterialCommunityIcons
             name="package-variant"
             size={24}
-            color="black"
+            color={pathname === "/product" ? "#22c55e" : "black"}
           />
-          <Text style={styles.tabLabel}>Product</Text>
+          <Text style={[styles.tabLabel, pathname === "/product" && styles.activeTabLabel]}>Product</Text>
         </TouchableOpacity>
 
         {/* Spacer for center button */}
@@ -34,12 +34,13 @@ export default function MiniTabBar() {
         {/* Right Tab */}
         <TouchableOpacity
           style={styles.tabItem}
-          onPress={() => router.push("/history")}>
-          <History
+          onPress={() => router.push("/profile")}>
+          <MaterialCommunityIcons
+            name="account"
             size={24}
-            color="black"
+            color={pathname === "/profile" ? "#22c55e" : "black"}
           />
-          <Text style={styles.tabLabel}>History</Text>
+          <Text style={[styles.tabLabel, pathname === "/profile" && styles.activeTabLabel]}>Profile</Text>
         </TouchableOpacity>
       </View>
 
@@ -114,6 +115,9 @@ const styles = StyleSheet.create({
     color: "black",
     marginTop: 0,
     fontFamily: Fonts.Poppins.medium
+  },
+  activeTabLabel: {
+    color: "#22c55e",
   },
   centerButtonWrapper: {
     position: "absolute",
