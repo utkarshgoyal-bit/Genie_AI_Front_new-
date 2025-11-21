@@ -77,8 +77,8 @@ const Profile = () => {
         const mappedHistory: HistoryItem[] = backendHistory.map((item: any) => {
           const imgUrl = item.image
             ? item.image
-                .replace(/\\/g, "/")
-                .replace(/^.*uploads/, `${BASE_URL}/uploads`)
+              .replace(/\\/g, "/")
+              .replace(/^.*uploads/, `${BASE_URL}/uploads`)
             : "https://via.placeholder.com/80";
 
           return {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     alignSelf: "flex-end",
     marginLeft: 0,
-    marginTop: 2 ,
+    marginTop: 2,
   },
   deleteText: {
     color: "#fff",

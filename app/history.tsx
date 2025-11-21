@@ -55,7 +55,7 @@ const HistoryScreen = () => {
         setHistory(mappedHistory);
       } catch (error: any) {
         Alert.alert("Error", "Failed to fetch history.");
-      } finally{
+      } finally {
         setLoading(false);
       }
     };

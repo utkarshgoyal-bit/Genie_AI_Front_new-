@@ -9,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "description": "AI-powered plant disease diagnosis and gardening assistant. Upload photos of your plants to identify diseases and get expert care recommendations.",
+    "privacy": "public",
     "splash": {
       "image": "./assets/images/GardenGenieIcon.png",
       "backgroundColor": "#00000000",
@@ -16,7 +17,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hydrofarmtech.genieai",
+      "bundleIdentifier": "com.hydrofarmtech.GenieAI",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -27,8 +28,9 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.hydrofarmtech.genieai",
+      "package": "com.hydrofarmtech.Genie_AI",
       "versionCode": 1,
+      "hermesEnabled": true,
       "permissions": [
         "CAMERA",
         "INTERNET",
@@ -37,7 +39,11 @@
         "READ_MEDIA_IMAGES",
         "READ_MEDIA_VIDEO"
       ],
-      "blockedPermissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "blockedPermissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "privacyPolicy": "https://gardengenie.in/privacy-policy/"
     },
     "web": {
       "bundler": "metro",
@@ -62,7 +68,7 @@
       ]
     ],
     "extra": {
-      "BASE_URL": "https://api.gardengenie.in",
+      "BASE_URL": "https://7e8327fe99f9.ngrok-free.app",
       "router": {},
       "eas": {
         "projectId": "e319c1aa-f321-47af-a9ab-4e3342075351"

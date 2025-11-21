@@ -20,13 +20,13 @@ export default function MiniTabBar({ visible = true }: { visible?: boolean }) {
         {/* Left Tab */}
         <TouchableOpacity
           style={styles.tabItem}
-          onPress={() => router.push("/productv2")}>
+          onPress={() => router.push("/product")}>
           <MaterialCommunityIcons
             name="package-variant"
             size={24}
-            color={pathname === "/productv2" ? "#22c55e" : "black"}
+            color={pathname === "/product" ? "#22c55e" : "black"}
           />
-          <Text style={[styles.tabLabel, pathname === "/productv2" && styles.activeTabLabel]}>Product</Text>
+          <Text style={[styles.tabLabel, pathname === "/product" && styles.activeTabLabel]}>Product</Text>
         </TouchableOpacity>
 
         {/* Spacer for center button */}

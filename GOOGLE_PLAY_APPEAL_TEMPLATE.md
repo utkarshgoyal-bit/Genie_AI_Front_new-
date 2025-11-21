@@ -28,7 +28,7 @@
 **To:** Google Play Policy Team
 
 **App Name:** Garden Genie AI
-**Package Name:** com.hydrofarmtech.genieai
+**Package Name:** com.hydrofarmtech.genie_ai
 **Developer Account:** [Your Developer Account Name]
 **Suspension Date:** [Date]
 **Violation Reason:** [Copy exact reason from suspension notice]
@@ -37,7 +37,7 @@
 
 **Dear Google Play Review Team,**
 
-I am writing to appeal the suspension of my application "Garden Genie AI" (com.hydrofarmtech.genieai) and respectfully request a review of this decision.
+I am writing to appeal the suspension of my application "Garden Genie AI" (com.hydrofarmtech.genie_ai) and respectfully request a review of this decision.
 
 ### Understanding of the Violation
 
