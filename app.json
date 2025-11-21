@@ -1,0 +1,73 @@
+{
+  "expo": {
+    "name": "Garden Genie AI",
+    "slug": "Genie_AI",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/GardenGenieIcon.png",
+    "scheme": "genieai",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "description": "AI-powered plant disease diagnosis and gardening assistant. Upload photos of your plants to identify diseases and get expert care recommendations.",
+    "splash": {
+      "image": "./assets/images/GardenGenieIcon.png",
+      "backgroundColor": "#00000000",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hydrofarmtech.genieai",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/GardenGenieIcon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.hydrofarmtech.genieai",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "INTERNET",
+        "RECORD_AUDIO",
+        "VIBRATE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ],
+      "blockedPermissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/GardenGenieIcon.png"
+    },
+    "jsEngine": "hermes",
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 35,
+            "usesCleartextTraffic": false,
+            "networkSecurityConfig": "network_security_config"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "BASE_URL": "https://api.gardengenie.in",
+      "router": {},
+      "eas": {
+        "projectId": "e319c1aa-f321-47af-a9ab-4e3342075351"
+      }
+    },
+    "owner": "maitrii-infotech"
+  }
+}
