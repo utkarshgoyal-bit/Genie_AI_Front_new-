@@ -68,7 +68,7 @@
       ]
     ],
     "extra": {
-      "BASE_URL": "https://7e8327fe99f9.ngrok-free.app",
+      "BASE_URL": "https://api.gardengenie.in",
       "router": {},
       "eas": {
         "projectId": "e319c1aa-f321-47af-a9ab-4e3342075351"
