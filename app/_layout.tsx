@@ -38,7 +38,7 @@ export default function RootLayout() {
           animation: "slide_from_bottom",
         }}
       />
-      {(pathname === "/product" || pathname === "/profile") && <MiniTabBar visible={true} />}
+      {(pathname === "/productv2" || pathname === "/profile") && <MiniTabBar visible={true} />}
     </GestureHandlerRootView>
   );
 }
