@@ -74,7 +74,7 @@ const AIChatScreen = () => {
               
               // Use setTimeout to defer state updates to next tick
               setTimeout(() => {
-                const detectedPlant = plantData?.scientific_name?.toLowerCase().trim();
+                const detectedPlant = plantData?.plant?.scientific_name?.toLowerCase().trim();
 
                 if (!Object.keys(allowedPlants).includes(detectedPlant)) {
                   setAlertVisible(true);
@@ -99,11 +99,15 @@ const AIChatScreen = () => {
           });
         }, 20);
       } else {
-        Alert.alert(
-          `Upload Error ${plantData.code} ${plantData.status}`,
-          plantData?.response?.data.detail || "There was an error uploading the images.",
-          [{ text: "OK", onPress: () => router.back() }]
-        );
+        if (plantData?.response?.data.detail === "No plant detected in image") {
+          setAlertVisible(true);
+        } else {
+          Alert.alert(
+            `Upload Error ${plantData.code} ${plantData.status}`,
+            plantData?.response?.data.detail || "There was an error uploading the images.",
+            [{ text: "OK", onPress: () => router.back() }]
+          );
+        }
       }
     } catch (error: any) {
       Alert.alert(

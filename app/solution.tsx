@@ -33,7 +33,9 @@ const BASE_URL = Constants.expoConfig?.extra?.BASE_URL;
 const RecommendedSolutionScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const [modalContent, setModalContent] = useState<{ [key: string]: { title: string, content: string[] } }>({});
+  const [modalContent, setModalContent] = useState<{
+    [key: string]: { title: string; content: string[] };
+  }>({});
   const [showSolutions, setShowSolutions] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -49,6 +51,13 @@ const RecommendedSolutionScreen = () => {
   } catch (e) {
     // Failed to parse result JSON
   }
+
+  // DEBUG: inspect incoming data structure
+  useEffect(() => {
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+    }
+  }, [data]);
 
   interface Product {
     disease: string;
@@ -71,10 +80,9 @@ const RecommendedSolutionScreen = () => {
 
     const fetchProducts = async () => {
       try {
-       const url = `${BASE_URL}/products/search?disease_scientific_name=${encodeURIComponent(
-      sciName
-    )}&plant_scientific_name=${encodeURIComponent(plantSciName)}`;
-
+        const url = `${BASE_URL}/products/by-scientific-name/${encodeURIComponent(
+          sciName
+        )}?plant_scientific_name=${encodeURIComponent(plantSciName)}`;
         const productRes = await fetch(url);
         const productData = await productRes.json();
         if (!productRes.ok) {
@@ -88,7 +96,9 @@ const RecommendedSolutionScreen = () => {
           product_name: p.product_name ?? p.name ?? "Product",
           how_to_use: p.how_to_use ?? "",
           product_image:
-            p.product_image && typeof p.product_image === "string" && p.product_image.trim().length > 0
+            p.product_image &&
+            typeof p.product_image === "string" &&
+            p.product_image.trim().length > 0
               ? p.product_image
               : "https://via.placeholder.com/160x160.png?text=Product",
           product_link: p.product_link ?? "",
@@ -200,8 +210,7 @@ const RecommendedSolutionScreen = () => {
 
   const TreatmentPlan = () =>
     showSolutions &&
-    data?.disease &&
-    data?.treatment && (
+    data?.diagnosis?.treatment && (
       <Animated.View
         style={[
           styles.treatmentContainer,
@@ -235,8 +244,12 @@ const RecommendedSolutionScreen = () => {
             </View>
           </View>
 
+          <View >
+            <Text>Disease: {data.diagnosis.disease}</Text>
+          </View>
+
           <View style={styles.treatmentList}>
-            {data.disease.map((disease: string, index: number) => (
+            {data.diagnosis.treatment.map((treatment: string, index: number) => (
               <View key={index} style={styles.treatmentItem}>
                 <View
                   style={[
@@ -247,10 +260,7 @@ const RecommendedSolutionScreen = () => {
                   ]}
                 />
                 <View style={styles.treatmentContent}>
-                  <Text style={styles.diseaseName}>{disease}</Text>
-                  <Text style={styles.treatmentText}>
-                    {data.treatment[index] || "No treatment info"}
-                  </Text>
+                  <Text style={styles.treatmentText}>{treatment}</Text>
                 </View>
               </View>
             ))}
@@ -448,7 +458,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 1,
     marginBottom: 8,
-  
   },
   iconContainer: {
     width: 48,
@@ -463,7 +472,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 6,
   },
-  modernTitle: { fontSize: 24, fontFamily: Fonts.Poppins.bold, color: "#1F2937" },
+  modernTitle: {
+    fontSize: 24,
+    fontFamily: Fonts.Poppins.bold,
+    color: "#1F2937",
+  },
   modernSubtitle: {
     fontSize: 14,
     fontFamily: Fonts.Poppins.regular,
@@ -483,7 +496,12 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
   },
-  statText: { fontSize: 10, fontWeight:600, fontFamily: Fonts.Poppins.regular, color: "#374151" },
+  statText: {
+    fontSize: 10,
+    fontWeight: 600,
+    fontFamily: Fonts.Poppins.regular,
+    color: "#374151",
+  },
   scrollContainer: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 120 },
   treatmentContainer: { marginBottom: 24 },
@@ -496,8 +514,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 8,
     marginTop: 1,
-    
-    
   },
   treatmentHeader: {
     flexDirection: "row",
@@ -521,7 +537,12 @@ const styles = StyleSheet.create({
     color: "#1F2937",
     marginBottom: 2,
   },
-  treatmentSubtitle: { fontSize: 14, fontFamily: Fonts.Poppins.regular, color: "#059669", fontWeight: "500" },
+  treatmentSubtitle: {
+    fontSize: 14,
+    fontFamily: Fonts.Poppins.regular,
+    color: "#059669",
+    fontWeight: "500",
+  },
   successBadge: {
     width: 32,
     height: 32,
@@ -542,7 +563,12 @@ const styles = StyleSheet.create({
     color: "#1F2937",
     marginBottom: 4,
   },
-  treatmentText: { fontSize: 14, fontFamily: Fonts.Poppins.regular , color: "#4B5563", lineHeight: 20 },
+  treatmentText: {
+    fontSize: 14,
+    fontFamily: Fonts.Poppins.regular,
+    color: "#4B5563",
+    lineHeight: 20,
+  },
   productsSection: { marginBottom: 24 },
   sectionTitle: {
     fontSize: 20,
@@ -597,7 +623,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 10,
   },
-  ratingText: { fontSize: 12, fontFamily:Fonts.Poppins.regular, fontWeight: "600", color: "#F59E0B" },
+  ratingText: {
+    fontSize: 12,
+    fontFamily: Fonts.Poppins.regular,
+    fontWeight: "600",
+    color: "#F59E0B",
+  },
   productContent: { flexDirection: "row", marginBottom: 20, gap: 16 },
   productInfo: { flex: 1 },
   productName: {
@@ -615,7 +646,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontFamily: Fonts.Poppins.medium,
   },
-  productDescription: { fontSize: 14, fontFamily:Fonts.Poppins.regular, color: "#6B7280", lineHeight: 20 },
+  productDescription: {
+    fontSize: 14,
+    fontFamily: Fonts.Poppins.regular,
+    color: "#6B7280",
+    lineHeight: 20,
+  },
   imageWrapper: {
     width: 80,
     height: 80,
@@ -642,7 +678,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#dbeafe",
   },
-  infoButtonText: { color: "#2563EB",fontFamily: Fonts.Poppins.bold, fontWeight: "600", fontSize: 14 },
+  infoButtonText: {
+    color: "#2563EB",
+    fontFamily: Fonts.Poppins.bold,
+    fontWeight: "600",
+    fontSize: 14,
+  },
   buyButtonGradient: {
     flex: 1,
     borderRadius: 14,
@@ -659,7 +700,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 6,
   },
-  buyButtonText: { color: "white",fontFamily: Fonts.Poppins.bold, fontWeight: "600", fontSize: 14 },
+  buyButtonText: {
+    color: "white",
+    fontFamily: Fonts.Poppins.bold,
+    fontWeight: "600",
+    fontSize: 14,
+  },
   emptyState: {
     alignItems: "center",
     paddingVertical: 40,

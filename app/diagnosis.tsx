@@ -76,6 +76,24 @@ const DetailedDiagnosisScreen = () => {
     uploadedImages = [];
   }
 
+  // Normalize/guard diagnosis fields so we never call .some/.map on undefined
+  const diagnosis = data?.diagnosis ?? {};
+  const normalizeToArray = (value: any) => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string" && value.length) return [value];
+    return [];
+  };
+
+  const diseaseArray = normalizeToArray(diagnosis?.disease ?? data?.disease);
+  const symptomsArray = normalizeToArray(diagnosis?.symptoms ?? data?.symptoms);
+  const treatmentArray = normalizeToArray(diagnosis?.treatment ?? data?.treatment);
+  const causeArray = normalizeToArray(diagnosis?.cause ?? data?.cause);
+
+  const hasNoIssues =
+    diseaseArray.some((d: string) => typeof d === "string" && d.toLowerCase().includes("healthy")) ||
+    symptomsArray.includes("N/A") ||
+    treatmentArray.includes("N/A");
+
   useEffect(() => {
     const timers = [
       setTimeout(() => setShowDiagnosis(true), 300),
@@ -85,10 +103,6 @@ const DetailedDiagnosisScreen = () => {
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
-  const hasNoIssues =
-    data.disease.some((d: string) => d.includes("healthy")) ||
-    data.symptoms.includes("N/A") ||
-    data.treatment.includes("N/A");
 
   return (
     <View style={{ flex: 1 }}>
@@ -105,7 +119,7 @@ const DetailedDiagnosisScreen = () => {
 
         <View style={styles.imageCard}>
           <Image
-            source={plantImages[data?.scientific_name] || "../assets/images/disease.png"}
+            source={plantImages[data?.plant?.scientific_name] || "../assets/images/disease.png"}
             style={styles.plantImage}
             contentFit="cover"
             cachePolicy={"memory-disk"}
@@ -114,11 +128,9 @@ const DetailedDiagnosisScreen = () => {
           />
 
           {animationStage >= 1 &&
-            data?.disease?.length > 0 &&
-            data.disease.map((diseaseItem: string, idx: number) => (
-              <View
-                key={idx}
-                style={styles.labelContainer}>
+            diseaseArray.length > 0 &&
+            diseaseArray.map((diseaseItem: string, idx: number) => (
+              <View key={idx} style={styles.labelContainer}>
                 <View style={styles.labelBoxGreen}>
                   <View style={styles.pulseDotGreen} />
                   <Text style={styles.labelText}>{diseaseItem?.toUpperCase()}</Text>
@@ -136,7 +148,7 @@ const DetailedDiagnosisScreen = () => {
             <View style={{ flex: 1 }}>
               <Text style={styles.diagnosisTitle}>AI Analysis Complete</Text>
               <Typewriter
-                text={`Genie AI has detected ${data.common_name} with ${data.plant_confidence} confidence.`}
+                text={`Genie AI has detected ${data?.plant?.common_name ?? "your plant"} with ${Math.round((data?.plant?.confidence ?? 0) * 100)}% confidence.`}
                 speed={30}
               />
             </View>
@@ -159,10 +171,10 @@ const DetailedDiagnosisScreen = () => {
             <View style={{ flex: 1 }}>
               <Text style={styles.issuesHeader}>{hasNoIssues ? "Congratulations!!" : "ISSUE!!"}</Text>
 
-              {data.symptoms && data.symptoms.length > 0 ? (
+              {symptomsArray.length > 0 ? (
                 <Text style={styles.issueTitle}>
                   <Typewriter
-                    text={hasNoIssues ? "You're a good Plant Parent." : data.symptoms.join(", ")}
+                    text={hasNoIssues ? "You're a good Plant Parent." : symptomsArray.join(", ")}
                     speed={50}
                   />
                 </Text>
@@ -171,11 +183,9 @@ const DetailedDiagnosisScreen = () => {
               )}
 
               {/* Cause */}
-              {data.cause && data.cause.length > 0 ? (
-                data.cause.map((cause: string, i: number) => (
-                  <Text
-                    key={i}
-                    style={styles.issueText}>
+              {causeArray.length > 0 ? (
+                causeArray.map((cause: string, i: number) => (
+                  <Text key={i} style={styles.issueText}>
                     <Typewriter
                       text={hasNoIssues ? "Keep up the love and care" : cause}
                       delay={i * 500}
@@ -216,19 +226,14 @@ const DetailedDiagnosisScreen = () => {
                 pathname: hasNoIssues ? "/phoneVerification" : "/solution",
                 params: {
                   result: JSON.stringify(data),
-                  disease_scientific_name: data?.disease_scientific_name || "",
-                  scientific_name: data?.scientific_name || "",
-                  disease: data?.disease || "",
+                  disease_scientific_name: diagnosis?.disease_scientific_name ?? "",
+                  scientific_name: data?.plant?.scientific_name ?? "",
+                  disease: diseaseArray,
                 },
               })
             }
             text={hasNoIssues ? "Ask Genie AI again" : "View Solutions"}
-            postIcon={
-              <ArrowRight
-                color="white"
-                size={16}
-              />
-            }
+            postIcon={<ArrowRight color="white" size={16} />}
           />
 
           {hasNoIssues && (

@@ -30,10 +30,13 @@ const plantAnalysisApi = async ({
       },
       onUploadProgress,
     });
-    return response?.data?.data;
+    
+    
+    return response?.data;
   } catch (err: any) {
     throw err;
   }
 };
 
 export { plantAnalysisApi };
+
