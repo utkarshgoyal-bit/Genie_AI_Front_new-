@@ -33,9 +33,7 @@ const HistoryScreen = () => {
         }
 
         const response = await axios.get(`${BASE_URL}/history/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          params: { token },
         });
 
         const backendHistory = response.data.history || [];

@@ -3,9 +3,21 @@ import MiniTabBar from "@/components/MiniTabBar";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { AlertTriangle, ArrowRight, CheckCircle, Sparkles } from "lucide-react-native";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Fonts } from "../constants/Fonts";
 
 type TypewriterProps = {
@@ -14,8 +26,12 @@ type TypewriterProps = {
   speed?: number;
 };
 
-const Typewriter: React.FC<TypewriterProps> = ({ text, delay = 0, speed = 50 }) => {
-  const safeText = typeof text === "string" ? text : String(text);
+const Typewriter: React.FC<TypewriterProps> = ({
+  text,
+  delay = 0,
+  speed = 50,
+}) => {
+  const safeText = typeof text === "string" ? text : String(text ?? "");
   const [displayText, setDisplayText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
 
@@ -51,6 +67,7 @@ const plantImages: Record<string, any> = {
   "Epipremnum aureum": require("../assets/images/moneyplant.png"),
   "Sansevieria trifasciata": require("../assets/images/snakeplant.png"),
   "Dypsis lutescens": require("../assets/images/arecapalm.png"),
+  "Chamaedorea elegans": require("../assets/images/arecapalm.png"),
   "Murraya koenigii": require("../assets/images/curry.png"),
   "Codiaeum variegatum": require("../assets/images/croton.png"),
   "Solanum lycopersicum": require("../assets/images/tomato.png"),
@@ -65,34 +82,35 @@ const DetailedDiagnosisScreen = () => {
   const [animationStage, setAnimationStage] = useState(0);
   const { result, images } = useLocalSearchParams();
 
-  // ✅ Safe parse
   let data: any = null;
-  let uploadedImages = [];
+  let uploadedImages: string[] = [];
   try {
-    data = result ? JSON.parse(result as string) : null;
+    const parsedResult = result ? JSON.parse(result as string) : null;
+    // If it's a history item (has common_name at root), restructure it
+    if (parsedResult && parsedResult.common_name) {
+      data = {
+        plant: {
+          common_name: parsedResult.common_name,
+          scientific_name: parsedResult.scientific_name,
+          confidence: parsedResult.confidence,
+        },
+        diagnosis: {
+          disease: parsedResult.disease || "Healthy",
+          disease_scientific_name: parsedResult.disease_scientific_name || parsedResult.disease,
+          symptoms: parsedResult.symptoms || [],
+          treatment: parsedResult.treatment || [],
+          cause: parsedResult.cause || "",
+          prevention: parsedResult.prevention || [],
+        },
+      };
+    } else {
+      data = parsedResult;
+    }
     uploadedImages = images ? JSON.parse(images as string) : [];
   } catch (e) {
-    // Failed to parse diagnosis result
+    console.error("Error parsing result:", e);
     uploadedImages = [];
   }
-
-  // Normalize/guard diagnosis fields so we never call .some/.map on undefined
-  const diagnosis = data?.diagnosis ?? {};
-  const normalizeToArray = (value: any) => {
-    if (Array.isArray(value)) return value;
-    if (typeof value === "string" && value.length) return [value];
-    return [];
-  };
-
-  const diseaseArray = normalizeToArray(diagnosis?.disease ?? data?.disease);
-  const symptomsArray = normalizeToArray(diagnosis?.symptoms ?? data?.symptoms);
-  const treatmentArray = normalizeToArray(diagnosis?.treatment ?? data?.treatment);
-  const causeArray = normalizeToArray(diagnosis?.cause ?? data?.cause);
-
-  const hasNoIssues =
-    diseaseArray.some((d: string) => typeof d === "string" && d.toLowerCase().includes("healthy")) ||
-    symptomsArray.includes("N/A") ||
-    treatmentArray.includes("N/A");
 
   useEffect(() => {
     const timers = [
@@ -104,22 +122,45 @@ const DetailedDiagnosisScreen = () => {
     return () => timers.forEach(clearTimeout);
   }, []);
 
+  // Extract nested fields safely
+  const plant = data?.plant || {};
+  const diagnosis = data?.diagnosis || {};
+  const diseaseStr = diagnosis.disease || "";
+  const symptoms = diagnosis.symptoms || [];
+  const treatment = diagnosis.treatment || [];
+  const cause = diagnosis.cause || "";
+  const prevention = diagnosis.prevention || [];
+
+  const hasNoIssues =
+    diseaseStr.toLowerCase().includes("healthy") ||
+    symptoms.includes("N/A") ||
+    treatment.includes("N/A");
+
+  // Get plant image based on scientific name
+  const getPlantImage = () => {
+    const scientificName = plant.scientific_name || "";
+    for (const key of Object.keys(plantImages)) {
+      if (scientificName.toLowerCase().includes(key.toLowerCase())) {
+        return plantImages[key];
+      }
+    }
+    return require("../assets/images/disease.png");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{ padding: 16, paddingBottom: 200 }}>
+        contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
+      >
         <View style={styles.headerContainer}>
-          <Sparkles
-            color="#16a34a"
-            size={24}
-          />
+          <Sparkles color="#16a34a" size={24} />
           <Text style={styles.headerText}>AI Plant Diagnosis</Text>
         </View>
 
         <View style={styles.imageCard}>
           <Image
-            source={plantImages[data?.plant?.scientific_name] || "../assets/images/disease.png"}
+            source={getPlantImage()}
             style={styles.plantImage}
             contentFit="cover"
             cachePolicy={"memory-disk"}
@@ -127,28 +168,25 @@ const DetailedDiagnosisScreen = () => {
             responsivePolicy={"static"}
           />
 
-          {animationStage >= 1 &&
-            diseaseArray.length > 0 &&
-            diseaseArray.map((diseaseItem: string, idx: number) => (
-              <View key={idx} style={styles.labelContainer}>
-                <View style={styles.labelBoxGreen}>
-                  <View style={styles.pulseDotGreen} />
-                  <Text style={styles.labelText}>{diseaseItem?.toUpperCase()}</Text>
-                </View>
+          {animationStage >= 1 && diseaseStr && (
+            <View style={styles.labelContainer}>
+              <View style={styles.labelBoxGreen}>
+                <View style={styles.pulseDotGreen} />
+                <Text style={styles.labelText}>{diseaseStr.toUpperCase()}</Text>
               </View>
-            ))}
+            </View>
+          )}
         </View>
 
         {showDiagnosis && (
           <View style={styles.diagnosisCard}>
-            <CheckCircle
-              color="#16a34a"
-              size={20}
-            />
+            <CheckCircle color="#16a34a" size={20} />
             <View style={{ flex: 1 }}>
               <Text style={styles.diagnosisTitle}>AI Analysis Complete</Text>
               <Typewriter
-                text={`Genie AI has detected ${data?.plant?.common_name ?? "your plant"} with ${Math.round((data?.plant?.confidence ?? 0) * 100)}% confidence.`}
+                text={`Genie AI has detected ${
+                  plant.common_name || "Unknown"
+                } Plant `}
                 speed={30}
               />
             </View>
@@ -158,23 +196,23 @@ const DetailedDiagnosisScreen = () => {
         {showIssues && (
           <View style={styles.issueCard}>
             {hasNoIssues ? (
-              <CheckCircle
-                color="#16a34a"
-                size={20}
-              />
+              <CheckCircle color="#16a34a" size={20} />
             ) : (
-              <AlertTriangle
-                color="#ca8a04"
-                size={20}
-              />
+              <AlertTriangle color="#ca8a04" size={20} />
             )}
             <View style={{ flex: 1 }}>
-              <Text style={styles.issuesHeader}>{hasNoIssues ? "Congratulations!!" : "ISSUE!!"}</Text>
+              <Text style={styles.issuesHeader}>
+                {hasNoIssues ? "Congratulations!!" : "ISSUE!!"}
+              </Text>
 
-              {symptomsArray.length > 0 ? (
+              {symptoms.length > 0 ? (
                 <Text style={styles.issueTitle}>
                   <Typewriter
-                    text={hasNoIssues ? "You're a good Plant Parent." : symptomsArray.join(", ")}
+                    text={
+                      hasNoIssues
+                        ? "You're a good Plant Parent."
+                        : symptoms.join(", ")
+                    }
                     speed={50}
                   />
                 </Text>
@@ -182,24 +220,28 @@ const DetailedDiagnosisScreen = () => {
                 <Text style={styles.issueTitle}>No symptoms detected.</Text>
               )}
 
-              {/* Cause */}
-              {causeArray.length > 0 ? (
-                causeArray.map((cause: string, i: number) => (
-                  <Text key={i} style={styles.issueText}>
-                    <Typewriter
-                      text={hasNoIssues ? "Keep up the love and care" : cause}
-                      delay={i * 500}
-                      speed={25}
-                    />
-                  </Text>
-                ))
+              {cause ? (
+                <Text style={styles.issueText}>
+                  <Typewriter
+                    text={hasNoIssues ? "Keep up the love and care" : cause}
+                    delay={500}
+                    speed={25}
+                  />
+                </Text>
               ) : (
-                <Text style={styles.issueText}>No cause information available.</Text>
+                <Text style={styles.issueText}>
+                  No cause information available.
+                </Text>
               )}
             </View>
 
             <Image
-              source={uploadedImages?.[1] || "../assets/images/yellowing-leaves.png"}
+              source={{
+                uri:
+                  uploadedImages && uploadedImages.length > 0
+                    ? uploadedImages[0]
+                    : undefined,
+              }}
               style={styles.issueImage}
             />
           </View>
@@ -219,16 +261,18 @@ const DetailedDiagnosisScreen = () => {
             justifyContent: "center",
             gap: 4,
             paddingHorizontal: 20,
-          }}>
+          }}
+        >
           <Button
             onPress={() =>
               router.push({
                 pathname: hasNoIssues ? "/phoneVerification" : "/solution",
                 params: {
                   result: JSON.stringify(data),
-                  disease_scientific_name: diagnosis?.disease_scientific_name ?? "",
-                  scientific_name: data?.plant?.scientific_name ?? "",
-                  disease: diseaseArray,
+                  disease_scientific_name:
+                    diagnosis.disease_scientific_name || "",
+                  scientific_name: plant.scientific_name || "",
+                  disease: diseaseStr,
                 },
               })
             }
@@ -239,8 +283,11 @@ const DetailedDiagnosisScreen = () => {
           {hasNoIssues && (
             <TouchableOpacity
               style={styles.ExploreButton}
-              onPress={() => Linking.openURL("https://gardengenie.in")}>
-              <Text style={styles.ExploreButtonText}>Explore our Gardening Range</Text>
+              onPress={() => Linking.openURL("https://gardengenie.in")}
+            >
+              <Text style={styles.ExploreButtonText}>
+                Explore our Gardening Range
+              </Text>
             </TouchableOpacity>
           )}
         </View>

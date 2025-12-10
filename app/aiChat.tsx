@@ -2,7 +2,7 @@ import { plantAnalysisApi } from "@/api/plantAnalysis";
 import { NoPlantFound } from "@/components/NoPlantFound";
 import GenieAIThinking from "@/components/ui/GenieThinking";
 import { Colors } from "@/constants/Colors";
-import { allowedPlants, analysisSteps } from "@/constants/image";
+import { analysisSteps, matchSupportedPlant } from "@/constants/image";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { Lightbulb, Sparkles } from "lucide-react-native";
@@ -36,7 +36,6 @@ const AIChatScreen = () => {
     try {
       return images ? JSON.parse(images as string) : [];
     } catch (e) {
-      // Failed to parse images
       return [];
     }
   }, [images]);
@@ -71,17 +70,24 @@ const AIChatScreen = () => {
           setDisplayProgress((prev) => {
             if (prev >= 100) {
               clearInterval(waitInterval);
-              
-              // Use setTimeout to defer state updates to next tick
-              setTimeout(() => {
-                const detectedPlant = plantData?.plant?.scientific_name?.toLowerCase().trim();
 
-                if (!Object.keys(allowedPlants).includes(detectedPlant)) {
+              setTimeout(() => {
+                // Get plant names from nested response structure
+                const scientificName = plantData?.plant?.scientific_name;
+                const commonName = plantData?.plant?.common_name;
+
+                // Fuzzy match against supported plants
+                const match = matchSupportedPlant(scientificName, commonName);
+
+                if (!match.isSupported) {
                   setAlertVisible(true);
                   return;
                 }
 
-                plantData.common_name = allowedPlants[detectedPlant];
+                // Use matched common name for consistency
+                if (match.commonName) {
+                  plantData.plant.common_name = match.commonName;
+                }
 
                 router.replace({
                   pathname: "/diagnosis",
@@ -91,23 +97,19 @@ const AIChatScreen = () => {
                   },
                 });
               }, 0);
-              
+
               return prev;
             } else {
-              return prev + 1; // Smoothly fill remaining progress
+              return prev + 1;
             }
           });
         }, 20);
       } else {
-        if (plantData?.response?.data.detail === "No plant detected in image") {
-          setAlertVisible(true);
-        } else {
-          Alert.alert(
-            `Upload Error ${plantData.code} ${plantData.status}`,
-            plantData?.response?.data.detail || "There was an error uploading the images.",
-            [{ text: "OK", onPress: () => router.back() }]
-          );
-        }
+        Alert.alert(
+          `Upload Error ${plantData.code} ${plantData.status}`,
+          plantData?.response?.data.detail || "There was an error uploading the images.",
+          [{ text: "OK", onPress: () => router.back() }]
+        );
       }
     } catch (error: any) {
       Alert.alert(

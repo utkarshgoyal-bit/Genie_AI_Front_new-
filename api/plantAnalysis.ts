@@ -30,7 +30,7 @@ const plantAnalysisApi = async ({
       },
       onUploadProgress,
     });
-    
+   
     
     return response?.data;
   } catch (err: any) {

@@ -15,6 +15,7 @@ export const NoPlantFound = ({
     Hibiscus: require("../assets/images/hibiscus.png"),
     "Money Plant": require("../assets/images/moneyplant.png"),
     "Areca Palm": require("../assets/images/arecapalm.png"),
+    "Parlor Palm": require("../assets/images/arecapalm.png"),
     Tomato: require("../assets/images/tomato.png"),
     "Peace Lily": require("../assets/images/peacelily.png"),
     "Curry Leaf": require("../assets/images/curry.png"),
@@ -74,7 +75,7 @@ export const NoPlantFound = ({
               marginBottom: 12,
               fontFamily: Fonts.Poppins.regular,
             }}>
-            Currently we&apos;re at Version 1.0 of the app with just 10 Plants.
+            Currently we&apos;re at Version 1.0 of the app with just 11 Plants.
           </Text>
           <Text
             style={{

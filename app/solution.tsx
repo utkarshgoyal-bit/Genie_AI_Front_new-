@@ -52,13 +52,6 @@ const RecommendedSolutionScreen = () => {
     // Failed to parse result JSON
   }
 
-  // DEBUG: inspect incoming data structure
-  useEffect(() => {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-    }
-  }, [data]);
-
   interface Product {
     disease: string;
     product_name: string;
@@ -80,9 +73,10 @@ const RecommendedSolutionScreen = () => {
 
     const fetchProducts = async () => {
       try {
-        const url = `${BASE_URL}/products/by-scientific-name/${encodeURIComponent(
+        const url = `${BASE_URL}/products/search?disease_scientific_name=${encodeURIComponent(
           sciName
-        )}?plant_scientific_name=${encodeURIComponent(plantSciName)}`;
+        )}&plant_scientific_name=${encodeURIComponent(plantSciName)}`;
+
         const productRes = await fetch(url);
         const productData = await productRes.json();
         if (!productRes.ok) {
@@ -103,8 +97,14 @@ const RecommendedSolutionScreen = () => {
               : "https://via.placeholder.com/160x160.png?text=Product",
           product_link: p.product_link ?? "",
         }));
-        setProducts(normalized);
+
+        const uniqueProducts = normalized.filter(
+          (v, i, a) =>
+            a.findIndex((t) => t.product_name === v.product_name) === i
+        );
+        setProducts(uniqueProducts);
         setShowProducts(true);
+        console.log("Fetched products:", uniqueProducts);
       } catch (err) {
         // Failed to fetch products
         setProducts([]);
@@ -210,6 +210,7 @@ const RecommendedSolutionScreen = () => {
 
   const TreatmentPlan = () =>
     showSolutions &&
+    data?.diagnosis?.disease &&
     data?.diagnosis?.treatment && (
       <Animated.View
         style={[
@@ -244,26 +245,27 @@ const RecommendedSolutionScreen = () => {
             </View>
           </View>
 
-          <View >
-            <Text>Disease: {data.diagnosis.disease}</Text>
-          </View>
-
           <View style={styles.treatmentList}>
-            {data.diagnosis.treatment.map((treatment: string, index: number) => (
-              <View key={index} style={styles.treatmentItem}>
-                <View
-                  style={[
-                    styles.treatmentDot,
-                    {
-                      backgroundColor: index % 2 === 0 ? "#059669" : "#F97316",
-                    },
-                  ]}
-                />
-                <View style={styles.treatmentContent}>
-                  <Text style={styles.treatmentText}>{treatment}</Text>
-                </View>
+            <View style={styles.treatmentItem}>
+              <View
+                style={[
+                  styles.treatmentDot,
+                  {
+                    backgroundColor: "#059669",
+                  },
+                ]}
+              />
+              <View style={styles.treatmentContent}>
+                <Text style={styles.diseaseName}>{data.diagnosis.disease}</Text>
+                {data.diagnosis.treatment.map(
+                  (treatment: string, index: number) => (
+                    <Text key={index} style={styles.treatmentText}>
+                      {treatment}
+                    </Text>
+                  )
+                )}
               </View>
-            ))}
+            </View>
           </View>
         </LinearGradient>
       </Animated.View>

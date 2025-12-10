@@ -112,7 +112,7 @@ const Login = ({ styles }: { styles: any }) => {
           ]}>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>10+</Text>
+              <Text style={styles.statNumber}>11+</Text>
               <Text style={styles.statLabel}>Plant Types</Text>
             </View>
             <View style={styles.statDivider} />

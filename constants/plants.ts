@@ -18,8 +18,9 @@ export const rawPlantCategories = [
     name: "Fiddle Leaf Fig",
     image: require("../assets/images/fiddle.png"),
   },
+  { name: "Parlor Palm", image: require("../assets/images/arecapalm.png") },
 ];
-export const mainText = "Explore Genie AI for 10 Plants";
+export const mainText = "Explore Genie AI for 11 Plants";
 export const mainText2 = "Trained on Indian Household plants";
 export const subText = "Version 1.0";
 export const lastText = "Trained on Indian Household plants";

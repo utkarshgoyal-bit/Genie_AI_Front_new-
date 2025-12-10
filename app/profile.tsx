@@ -68,7 +68,7 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.get(`${BASE_URL}/history/`, {
+        const response = await axios.get(`${BASE_URL}/history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -77,10 +77,10 @@ const Profile = () => {
         const backendHistory = response.data.history || [];
 
         const mappedHistory: HistoryItem[] = backendHistory.map((item: any) => {
-          const imgUrl = item.image
-            ? item.image
-              .replace(/\\/g, "/")
-              .replace(/^.*uploads/, `${BASE_URL}/uploads`)
+        const imgUrl = item.image && item.image.length > 0
+        ? item.image[1]
+                .replace(/\\/g, "/")
+                .replace(/^.*uploads/, `${BASE_URL}/uploads`)
             : "https://via.placeholder.com/80";
 
           return {
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   historyHeader: {
     fontSize: 22,
     fontFamily: Fonts.Poppins.bold,
-    marginBottom: 12,
+    marginBottom: 0,
   },
 
   emptyText: {
