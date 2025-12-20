@@ -212,7 +212,11 @@ const Profile = () => {
           <FlatList
             data={history}
             keyExtractor={(item) => item.id}
-            renderItem={renderItem}
+            renderItem={renderItem} 
+            contentContainerStyle={{
+              paddingBottom: 100,
+              
+            }}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No history records found 🌱</Text>
             }
