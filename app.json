@@ -34,10 +34,7 @@
       "permissions": [
         "CAMERA",
         "INTERNET",
-        "RECORD_AUDIO",
-        "VIBRATE",
-        "READ_MEDIA_IMAGES",
-        "READ_MEDIA_VIDEO"
+        "VIBRATE"
       ],
       "blockedPermissions": [
         "READ_EXTERNAL_STORAGE",

@@ -50,8 +50,11 @@ const ProductList: React.FC = () => {
       }
 
       const response = await axios.get(`${BASE_URL}/products`, {
-        params: { token },
+        headers: {
+            Authorization: `Bearer ${token}`,
+          },
       });
+      
       if (response.status !== 200) throw new Error("Failed to fetch products");
 
       const data: Product[] = await response.data;
