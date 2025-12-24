@@ -42,28 +42,18 @@ const ProductList: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem("access_token");
-      if (!token) {
-        Alert.alert("Error", "You are not logged in.");
-        setLoading(false);
-        return;
-      }
 
-      const response = await axios.get(`${BASE_URL}/products`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-          },
-      });
-      
+      const response = await axios.get(`${BASE_URL}/products`);
+
       if (response.status !== 200) throw new Error("Failed to fetch products");
 
-      const data: Product[] = await response.data;
-
+      const data: Product[] = response.data;
 
       const normalized = data.map((d: any) => ({
         ...d,
         product_name: d.product_name ?? d.name,
       }));
+
       const uniqueProducts = normalized.filter(
         (item, index, self) =>
           index ===
@@ -76,7 +66,8 @@ const ProductList: React.FC = () => {
 
       setProducts(uniqueProducts);
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Something went wrong");
+      console.error("Product fetch error:", error.response?.data || error.message);
+      Alert.alert("Error", error.response?.data?.detail || error.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
