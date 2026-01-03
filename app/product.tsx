@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+﻿import axios from "axios";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
@@ -43,17 +42,20 @@ const ProductList: React.FC = () => {
     try {
       setLoading(true);
 
+      // ✅ FIXED: Removed authorization header - /products endpoint is public
       const response = await axios.get(`${BASE_URL}/products`);
-
+      
       if (response.status !== 200) throw new Error("Failed to fetch products");
 
       const data: Product[] = response.data;
+
+      console.log("Fetched products:", data);
 
       const normalized = data.map((d: any) => ({
         ...d,
         product_name: d.product_name ?? d.name,
       }));
-
+      
       const uniqueProducts = normalized.filter(
         (item, index, self) =>
           index ===
@@ -66,7 +68,11 @@ const ProductList: React.FC = () => {
 
       setProducts(uniqueProducts);
     } catch (error: any) {
-      console.error("Product fetch error:", error.response?.data || error.message);
+      console.error("Product fetch error:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       Alert.alert("Error", error.response?.data?.detail || error.message || "Failed to fetch products");
     } finally {
       setLoading(false);

@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
 import { Image } from "expo-image";
@@ -32,6 +32,7 @@ const HistoryScreen = () => {
           return;
         }
 
+        // ✅ CORRECT: Using Authorization header as backend expects
         const response = await axios.get(`${BASE_URL}/history/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +57,15 @@ const HistoryScreen = () => {
 
         setHistory(mappedHistory);
       } catch (error: any) {
-        Alert.alert("Error", "Failed to fetch history.");
+        console.error("History fetch error:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          url: `${BASE_URL}/history/`
+        });
+        
+        const errorMessage = error.response?.data?.detail || error.message || "Failed to fetch history.";
+        Alert.alert("Error", errorMessage);
       } finally {
         setLoading(false);
       }
