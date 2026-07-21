@@ -68,7 +68,7 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.get(`${BASE_URL}/history/`, {  // ← Added trailing slash
+        const response = await axios.get(`${BASE_URL}/history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -77,10 +77,10 @@ const Profile = () => {
         const backendHistory = response.data.history || [];
 
         const mappedHistory: HistoryItem[] = backendHistory.map((item: any) => {
-          const imgUrl = item.image && item.image.length > 0
-            ? item.image[1]
-              .replace(/\\/g, "/")
-              .replace(/^.*uploads/, `${BASE_URL}/uploads`)
+        const imgUrl = item.image && item.image.length > 0
+        ? item.image[1]
+                .replace(/\\/g, "/")
+                .replace(/^.*uploads/, `${BASE_URL}/uploads`)
             : "https://via.placeholder.com/80";
 
           return {
@@ -212,10 +212,10 @@ const Profile = () => {
           <FlatList
             data={history}
             keyExtractor={(item) => item.id}
-            renderItem={renderItem}
+            renderItem={renderItem} 
             contentContainerStyle={{
               paddingBottom: 100,
-
+              
             }}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No history records found 🌱</Text>

@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Camera as CameraIcon, Info, Sparkles, Upload, Zap, ZapOff } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Animated, Easing, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Fonts } from "../constants/Fonts";
 
 const PlantUpload = () => {
@@ -20,6 +20,26 @@ const PlantUpload = () => {
   const [mobileNumber, setMobileNumber] = useState<string | null>(null);
 
   const cameraRef = useRef<CameraView | null>(null);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.15,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [pulseAnim]);
 
   useEffect(() => {
     const getMobileNumber = async () => {
@@ -111,13 +131,20 @@ const PlantUpload = () => {
         key={step}
         style={styles.stepCard}>
         <View style={styles.stepHeader}>
-          <View style={[step === 1 ? styles.firstCircleWrapper : styles.secondCircleWrapper]}>
+          <Animated.View
+            style={[
+              step === 1 ? styles.firstCircleWrapper : styles.secondCircleWrapper,
+              { transform: [{ scale: pulseAnim }] },
+            ]}>
             <View style={[styles.stepNumber, { backgroundColor: step === 1 ? "#16A34A" : "#F97316" }]}>
               <Text style={styles.stepNumberText}>{step}</Text>
             </View>
-          </View>
+          </Animated.View>
           <View style={styles.stepText}>
-            <Text style={styles.stepTitle}>{step === 1 ? "Capture Overall Plant" : "Focus on Problem Area"}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Text style={styles.stepTitle}>{step === 1 ? "Capture Overall Plant" : "Focus on Problem Area"}</Text>
+              <Text style={styles.mandatory}>*</Text>
+            </View>
             <Text style={styles.stepDesc}>
               {step === 1
                 ? "Take a wide-angle photo of your entire plant"
@@ -147,14 +174,27 @@ const PlantUpload = () => {
               responsivePolicy={"static"}
             />
           )}
-          <TouchableOpacity
-            style={[styles.cameraIconWrapper, { backgroundColor: step === 1 ? "#16A34A" : "#F97316" }]}
-            onPress={() => handleCameraPress(step - 1)}>
-            <CameraIcon
-              size={16}
-              color="#fff"
-            />
-          </TouchableOpacity>
+          {capturedImages[step - 1] ? (
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: step === 1 ? "#16A34A" : "#F97316" }]}
+              onPress={() => handleCameraPress(step - 1)}>
+              <CameraIcon
+                size={14}
+                color="#fff"
+              />
+              <Text style={styles.actionButtonText}>Retake</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: step === 1 ? "#16A34A" : "#F97316" }]}
+              onPress={() => handleCameraPress(step - 1)}>
+              <CameraIcon
+                size={14}
+                color="#fff"
+              />
+              <Text style={styles.actionButtonText}>Capture</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     ));
@@ -335,41 +375,67 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   firstCircleWrapper: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     backgroundColor: "#E0F2FE",
-    borderRadius: 20,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 2,
   },
   secondCircleWrapper: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     backgroundColor: "#FCD8AA",
-    borderRadius: 20,
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 2,
   },
   stepNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },
-  stepNumberText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
+  stepNumberText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  mandatory: {
+    color: "#EF4444",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: -2,
+  },
   stepText: { flex: 1, fontFamily: Fonts.Poppins.bold },
   stepTitle: { fontWeight: "600", fontFamily: Fonts.Poppins.bold, fontSize: 14, color: "#111827" },
   stepDesc: { color: "#6B7280", fontFamily: Fonts.Poppins.regular, fontSize: 12 },
   imageWrapper: { position: "relative", marginBottom: 10 },
   image: { width: "100%", height: 160, borderRadius: 16 },
-  cameraIconWrapper: {
+  actionButton: {
     position: "absolute",
-    bottom: -10,
-    right: -10,
-    padding: 10,
-    borderRadius: 50,
-    elevation: 4,
+    bottom: 8,
+    right: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 28,
+    gap: 6,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    width: 85,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    borderWidth: 1,
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontFamily: Fonts.Poppins.bold,
+    fontSize: 12,
+    fontWeight: "bold",
   },
   uploadButton: {
     flexDirection: "row",

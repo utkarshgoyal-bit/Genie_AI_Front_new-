@@ -2,23 +2,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 import {
-  AlertCircle,
-  ChevronRight,
-  FileText,
-  LogOut,
-  Shield,
-  Trash2,
-  User,
+    AlertCircle,
+    ChevronRight,
+    FileText,
+    LogOut,
+    Shield,
+    Trash2,
+    User,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
-  Alert,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Linking,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../constants/Fonts";
@@ -267,7 +267,7 @@ const SettingsScreen = () => {
 
         {/* App Version */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Genie AI</Text>
+          <Text style={styles.footerText}>Garden Genie AI</Text>
           <Text style={styles.footerText}>Version 1.0.0</Text>
         </View>
       </ScrollView>

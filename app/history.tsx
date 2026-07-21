@@ -32,11 +32,10 @@ const HistoryScreen = () => {
           return;
         }
 
-        // ✅ CORRECT: Using Authorization header as backend expects
         const response = await axios.get(`${BASE_URL}/history/`, {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         });
 
         const backendHistory = response.data.history || [];
@@ -57,15 +56,7 @@ const HistoryScreen = () => {
 
         setHistory(mappedHistory);
       } catch (error: any) {
-        console.error("History fetch error:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          url: `${BASE_URL}/history/`
-        });
-        
-        const errorMessage = error.response?.data?.detail || error.message || "Failed to fetch history.";
-        Alert.alert("Error", errorMessage);
+        Alert.alert("Error", "Failed to fetch history.");
       } finally {
         setLoading(false);
       }
@@ -121,7 +112,7 @@ const HistoryScreen = () => {
           data={history}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          ListEmptyComponent={<Text style={styles.emptyText}>No history records found 🌱</Text>}
+          ListEmptyComponent={<Text style={styles.emptyText}>No history records found</Text>}
         />
       )}
     </View>

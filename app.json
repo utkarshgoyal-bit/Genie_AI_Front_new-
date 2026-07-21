@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Genie AI",
+    "name": "Garden Genie AI",
     "slug": "Genie_AI",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -34,7 +34,10 @@
       "permissions": [
         "CAMERA",
         "INTERNET",
-        "VIBRATE"
+        "RECORD_AUDIO",
+        "VIBRATE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
       ],
       "blockedPermissions": [
         "READ_EXTERNAL_STORAGE",
